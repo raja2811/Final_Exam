@@ -1,0 +1,237 @@
+SQL> SELECT to_char(sysdate,'DD Month YYYY Day HH:MI:SS Am') FROM dual;
+
+TO_CHAR(SYSDATE,'DDMONTHYYYYDAYHH:MI:SSAM')                                     
+--------------------------------------------------------------------------------
+24 February  2024 Saturday  06:53:34 Pm                                         
+
+SQL> CREATE USER c##28_raja IDENTIFIED BY 2807;
+
+User created.
+
+SQL>  GRANT connect, resource TO c##28_raja;
+
+Grant succeeded.
+
+SQL> ALTER USER c##28_raja QUOTA 100M on users;
+
+User altered.
+
+SQL> connect c##28_raja/2807;
+Connected.
+SQL> create table customer (custid NUMBER,custname VARCHAR2(50),phone NUMBER);
+
+Table created.
+
+SQL>  create table orders (oid NUMBER,odate DATE,custid NUMBER);
+
+Table created.
+
+SQL> create table product (pid NUMBER, description VARCHAR2(50),price NUMBER,supid NUMBER);
+
+Table created.
+
+SQL> create table order_line (pid NUMBER,oid NUMBER,quantity NUMBER);
+
+Table created.
+
+SQL>  create table supplier(supid NUMBER,supname VARCHAR2(50));
+
+Table created.
+
+SQL> desc customer
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTID                                             NUMBER
+ CUSTNAME                                           VARCHAR2(50)
+ PHONE                                              NUMBER
+
+SQL>  desc orders
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OID                                                NUMBER
+ ODATE                                              DATE
+ CUSTID                                             NUMBER
+
+SQL> desc product
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PID                                                NUMBER
+ DESCRIPTION                                        VARCHAR2(50)
+ PRICE                                              NUMBER
+ SUPID                                              NUMBER
+
+SQL> desc order_line
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PID                                                NUMBER
+ OID                                                NUMBER
+ QUANTITY                                           NUMBER
+
+SQL> desc supplier
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SUPID                                              NUMBER
+ SUPNAME                                            VARCHAR2(50)
+
+SQL>  ALTER TABLE customer add constraint customer_custid_pk primary key (custid);
+
+Table altered.
+
+SQL>  ALTER TABLE orders add constraint orders_oid_pk primary key (oid);
+
+Table altered.
+
+SQL> ALTER TABLE product add constraint product_pid_pk primary key (pid);
+
+Table altered.
+
+SQL>  ALTER TABLE supplier add constraint supplier_supid_pk primary key (supid);
+
+Table altered.
+
+SQL> ALTER TABLE orders add constraint orders_custid_fk foreign key (custid) references customer(custid);
+
+Table altered.
+
+SQL> ALTER TABLE product add constraint product_supid_fk foreign key (supid) references supplier(supid);
+
+Table altered.
+
+SQL> ALTER TABLE order_line add(constraint productId_fk foreign key(pId) references product(pId),constraint orderId_fk foreign key(oId) references orders(oId));
+
+Table altered.
+
+SQL>  insert into customer values(28,'parth',9624208345);
+
+1 row created.
+
+SQL>  insert into supplier values(2807,'shraddha');
+
+1 row created.
+
+SQL>  insert into product values(0011,'for sport',3000,2807);
+
+1 row created.
+
+SQL> alter table product add constraint price_check check(price >= 0);
+
+Table altered.
+
+SQL> desc customer
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTID                                    NOT NULL NUMBER
+ CUSTNAME                                           VARCHAR2(50)
+ PHONE                                              NUMBER
+
+SQL>  desc orders
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OID                                       NOT NULL NUMBER
+ ODATE                                              DATE
+ CUSTID                                             NUMBER
+
+SQL> desc product
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PID                                       NOT NULL NUMBER
+ DESCRIPTION                                        VARCHAR2(50)
+ PRICE                                              NUMBER
+ SUPID                                              NUMBER
+
+SQL> desc order_line
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PID                                                NUMBER
+ OID                                                NUMBER
+ QUANTITY                                           NUMBER
+
+SQL> desc supplier
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SUPID                                     NOT NULL NUMBER
+ SUPNAME                                            VARCHAR2(50)
+
+SQL> SELECT constraint_name, constraint_type, table_name FROM user_constraints;
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+ORDERS_CUSTID_FK                                                                
+R                                                                               
+ORDERS                                                                          
+                                                                                
+ORDERID_FK                                                                      
+R                                                                               
+ORDER_LINE                                                                      
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+                                                                                
+PRODUCTID_FK                                                                    
+R                                                                               
+ORDER_LINE                                                                      
+                                                                                
+PRODUCT_SUPID_FK                                                                
+R                                                                               
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+PRODUCT                                                                         
+                                                                                
+CUSTOMER_CUSTID_PK                                                              
+P                                                                               
+CUSTOMER                                                                        
+                                                                                
+ORDERS_OID_PK                                                                   
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+P                                                                               
+ORDERS                                                                          
+                                                                                
+PRODUCT_PID_PK                                                                  
+P                                                                               
+PRODUCT                                                                         
+                                                                                
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+SUPPLIER_SUPID_PK                                                               
+P                                                                               
+SUPPLIER                                                                        
+                                                                                
+PRICE_CHECK                                                                     
+C                                                                               
+PRODUCT                                                                         
+
+CONSTRAINT_NAME                                                                 
+--------------------------------------------------------------------------------
+C                                                                               
+-                                                                               
+TABLE_NAME                                                                      
+--------------------------------------------------------------------------------
+                                                                                
+
+9 rows selected.
+
+SQL> spool off
